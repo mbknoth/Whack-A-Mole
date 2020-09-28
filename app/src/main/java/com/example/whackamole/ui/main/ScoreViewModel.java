@@ -53,4 +53,11 @@ public class ScoreViewModel extends ViewModel {
     }
 
 
+    /**
+     * This method resets the values of the current game score and high score
+     */
+    public void hardResetGame(){
+        highScore.setValue(0);
+        currentScore.setValue(0);
+    }
 }
