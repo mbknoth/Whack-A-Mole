@@ -12,10 +12,10 @@ import com.example.whackamole.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MainGameFragment#newInstance} factory method to
+ * Use the {@link EndGameScreenFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainGameFragment extends Fragment {
+public class EndGameScreenFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class MainGameFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public MainGameFragment() {
+    public EndGameScreenFragment() {
         // Required empty public constructor
     }
 
@@ -36,11 +36,11 @@ public class MainGameFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MainGameFragment.
+     * @return A new instance of fragment ScoreFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MainGameFragment newInstance(String param1, String param2) {
-        MainGameFragment fragment = new MainGameFragment();
+    public static EndGameScreenFragment newInstance(String param1, String param2) {
+        EndGameScreenFragment fragment = new EndGameScreenFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class MainGameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_game, container, false);
+        return inflater.inflate(R.layout.fragment_end_game_screen, container, false);
     }
 }
