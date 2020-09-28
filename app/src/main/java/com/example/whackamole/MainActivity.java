@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -13,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.whackamole.ui.main.ScoreViewModel;
+
+import java.util.Random;
 
 import static android.view.View.INVISIBLE;
 
@@ -75,19 +78,43 @@ public class MainActivity extends AppCompatActivity {
     // Step 3. Every 20 seconds the game gets progressively faster and faster
     // Step 4. End of game, it displays
 
+    // Fragment Transaction Manager for displaying the score fragment and game over fragment - They are dynamic fragments
+    // OR end game to become a different view and
+
     // Question: How to increase the time and appearance of mole? Tie it together with variable and update the runnable postdelay?
+    // substitute the 10 to a variable and decrease it every so often to make the appearance
     // Question:
 
     public void startGame() {
-        int final_score = 0;
         Long startTime = SystemClock.uptimeMillis();
+
+        // Variable to keep track of score
+        int final_score = 0;
+        // Variable to keep track of misses
+        final int[] miss_count = {0};
+
         runnable = new Runnable() {
             @Override
             public void run() {
+
                 long diff = SystemClock.uptimeMillis() - startTime;
+
+
                 if(diff >= endGameTime){
-                    endGame(final_score);
+                    miss_count[0]++;
+                    if(miss_count[0] >= 3){
+                        endGame(final_score);
+                    }
                 }
+                else {
+                    Random random = new Random();
+
+                }
+
+
+
+
+
                 handler.postDelayed(this, 10);
             }
         };
