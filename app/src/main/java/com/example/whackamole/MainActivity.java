@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +14,9 @@ import com.example.whackamole.ui.main.ScoreViewModel;
 public class MainActivity extends AppCompatActivity {
 
     private ScoreViewModel scoreViewModel;
+    private Handler handler;
+    private Runnable runnable;
+    private int endGameTime = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,25 @@ public class MainActivity extends AppCompatActivity {
 
         scoreViewModel = new ViewModelProvider(this).get(ScoreViewModel.class);
 
+
+    }
+
+
+    public void startGame() {
+        Long startTime = SystemClock.uptimeMillis();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                long diff = SystemClock.uptimeMillis() - startTime;
+                if(diff >= endGameTime){
+
+                }
+                handler.postDelayed(this, 10);
+            }
+        };
+    }
+
+    public void endGame(int score) {
 
     }
 }
