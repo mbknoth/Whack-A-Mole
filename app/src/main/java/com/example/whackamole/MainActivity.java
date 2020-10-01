@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.whackamole.ui.main.MoleViewModel;
 import com.example.whackamole.ui.main.ScoreViewModel;
 
 import java.util.Random;
@@ -23,9 +24,22 @@ public class MainActivity extends AppCompatActivity {
 
     private ScoreViewModel scoreViewModel;
     private Observer<Integer> scoreObserver;
-    private Handler handler;
-    private Runnable runnable;
-    private int endGameTime = 10;
+
+    private MoleViewModel moleViewModel;
+    private Observer<Integer> moleObserver;
+
+    private ImageView showMoleHere;
+    private ImageView m1;
+    private ImageView m2;
+    private ImageView m3;
+    private ImageView m4;
+    private ImageView m5;
+    private ImageView m6;
+    private ImageView m7;
+    private ImageView m8;
+    private ImageView m9;
+
+    private Integer missCount = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,24 +61,24 @@ public class MainActivity extends AppCompatActivity {
         };
         scoreViewModel.getHighScore().observe(this, scoreObserver);
 
-        ImageView m1 = (ImageView) findViewById(R.id.mole1);
-        ImageView m2 = (ImageView) findViewById(R.id.mole2);
-        ImageView m3 = (ImageView) findViewById(R.id.mole3);
-        ImageView m4 = (ImageView) findViewById(R.id.mole4);
-        ImageView m5 = (ImageView) findViewById(R.id.mole5);
-        ImageView m6 = (ImageView) findViewById(R.id.mole6);
-        ImageView m7 = (ImageView) findViewById(R.id.mole7);
-        ImageView m8 = (ImageView) findViewById(R.id.mole8);
-        ImageView m9 = (ImageView) findViewById(R.id.mole9);
+        m1 = (ImageView) findViewById(R.id.mole1);
+        m2 = (ImageView) findViewById(R.id.mole2);
+        m3 = (ImageView) findViewById(R.id.mole3);
+        m4 = (ImageView) findViewById(R.id.mole4);
+        m5 = (ImageView) findViewById(R.id.mole5);
+        m6 = (ImageView) findViewById(R.id.mole6);
+        m7 = (ImageView) findViewById(R.id.mole7);
+        m8 = (ImageView) findViewById(R.id.mole8);
+        m9 = (ImageView) findViewById(R.id.mole9);
 
         Button start_game_button = (Button) findViewById(R.id.start_button);
 
         start_game_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                start_game_button.setClickable(false);
-                start_game_button.setVisibility(INVISIBLE);
-                startGame();
+//                start_game_button.setClickable(false);
+//                start_game_button.setVisibility(INVISIBLE);
+//                startGame();
             }
         });
 
@@ -85,42 +99,44 @@ public class MainActivity extends AppCompatActivity {
     // substitute the 10 to a variable and decrease it every so often to make the appearance
     // Question:
 
-    public void startGame() {
-        Long startTime = SystemClock.uptimeMillis();
+    public void startGame(){
+        moleViewModel = new ViewModelProvider(this).get(MoleViewModel.class);
+        moleViewModel.runGame();
 
-        // Variable to keep track of score
-        int final_score = 0;
-        // Variable to keep track of misses
-        final int[] miss_count = {0};
-
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                long diff = SystemClock.uptimeMillis() - startTime;
-
-
-                if(diff >= endGameTime){
-                    miss_count[0]++;
-                    if(miss_count[0] >= 3){
-                        endGame(final_score);
+        int inGameMisses = 0;
+        while (missCount > inGameMisses){
+            moleObserver = new Observer<Integer>() {
+                @Override
+                public void onChanged(Integer integer) {
+                    switch (integer){
+                        case 0: showMoleHere = m1;
+                            break;
+                        case 1: showMoleHere = m2;
+                            break;
+                        case 2: showMoleHere = m3;
+                            break;
+                        case 3: showMoleHere = m4;
+                            break;
+                        case 4: showMoleHere = m5;
+                            break;
+                        case 5: showMoleHere = m6;
+                            break;
+                        case 6: showMoleHere = m7;
+                            break;
+                        case 7: showMoleHere = m8;
+                            break;
+                        case 8: showMoleHere = m9;
+                            break;
                     }
                 }
-                else {
-                    Random random = new Random();
+            };
+            moleViewModel.getRandomMole().observe(this, moleObserver);
 
-                }
+        }
 
-
-
-
-
-                handler.postDelayed(this, 10);
-            }
-        };
     }
 
-    public void endGame(int score) {
+    public void endGame(){
 
     }
 }
