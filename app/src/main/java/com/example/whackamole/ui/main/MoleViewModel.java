@@ -1,6 +1,7 @@
 package com.example.whackamole.ui.main;
 
 import android.os.Handler;
+import android.os.SystemClock;
 import android.widget.ImageView;
 
 import androidx.lifecycle.MutableLiveData;
@@ -20,9 +21,14 @@ public class MoleViewModel extends ViewModel {
 
     public MoleViewModel() {
         this.moleDelay = 50;
+        missCount = new MutableLiveData<Integer>();
+        moleIndex = new MutableLiveData<Integer>();
         missCount.setValue(0);
+
+        handler = new Handler();
+
         molesVisible = new boolean[10];
-        for(int i = 0; i < molesVisible.length; i++){
+        for (int i = 0; i < molesVisible.length; i++) {
             molesVisible[i] = false;
         }
     }
@@ -31,68 +37,66 @@ public class MoleViewModel extends ViewModel {
         return missCount;
     }
 
-
     public Integer getMoleDelay() {
         return moleDelay;
     }
 
     public void setMoleDelay(Integer moleDelay) {
-        if(moleDelay <= 0){
+        if (moleDelay <= 0) {
             this.moleDelay = 0;
-        }
-        else {
+        } else {
             this.moleDelay = moleDelay;
         }
     }
 
-    public void setMolesVisibleAtIndex(int index, boolean visibility){
+    public void setMolesVisibleAtIndex(int index, boolean visibility) {
         molesVisible[index] = visibility;
     }
 
-    public boolean getMolesVisibleAtIndex(int index){
+    public boolean getMolesVisibleAtIndex(int index) {
         return this.molesVisible[index];
     }
 
-    public MutableLiveData<Integer> getRandomMole(){
+    public MutableLiveData<Integer> getRandomMole() {
         return moleIndex;
     }
 
-    public void runGame(){
+    public void runGame() {
         Runnable runnable = new Runnable() {
             int count = 0;
+
             @Override
             public void run() {
-                if(count < 10){
+                if (count < 10) {
                     int randNum = new Random(System.currentTimeMillis()).nextInt(8);
-                    if(!getMolesVisibleAtIndex(randNum)){
+                    if (!getMolesVisibleAtIndex(randNum)) {
                         moleIndex.setValue(randNum);
                         setMolesVisibleAtIndex(randNum, true);
                     }
                     count++;
-                }
-                else{
+                } else {
                     count = 0;
                     setMoleDelay(moleDelay - 5);
                 }
                 handler.postDelayed(this, getMoleDelay());
             }
         };
-
+        handler.postAtTime(runnable, SystemClock.uptimeMillis());
     }
 
-    public void keepTrackOfMoles(){
+    public void keepTrackOfMoles() {
         Runnable runnable = new Runnable() {
             int[] count = new int[10];
+
             @Override
             public void run() {
-                for(int i = 0; i < count.length; i++){
-                    if(getMolesVisibleAtIndex(i)){
-                        if(count[i] >= 10){
+                for (int i = 0; i < count.length; i++) {
+                    if (getMolesVisibleAtIndex(i)) {
+                        if (count[i] >= 10) {
                             missCount.setValue(missCount.getValue() + 1);
                             setMolesVisibleAtIndex(i, false);
                             count[i] = 0;
-                        }
-                        else{
+                        } else {
                             count[i]++;
                         }
                     }
@@ -101,6 +105,7 @@ public class MoleViewModel extends ViewModel {
                 handler.postDelayed(this, 10);
             }
         };
+        handler.postAtTime(runnable, SystemClock.uptimeMillis());
     }
 
 }

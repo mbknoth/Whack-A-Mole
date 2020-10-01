@@ -2,6 +2,7 @@ package com.example.whackamole;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView m9;
     private TextView score;
 
-    private Integer missCount = 3;
+    private Integer missCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
 
         scoreViewModel = new ViewModelProvider(this).get(ScoreViewModel.class);
+
+        missCount = 0;
 
         score = (TextView) findViewById(R.id.current_score);
         TextView hi_score = (TextView) findViewById(R.id.high_score);
@@ -183,52 +186,73 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void upScore(){
-        scoreViewModel.setCurrentScore(scoreViewModel.getCurrentScore().getValue() + 1);
+    public void upScore() {
+        int currentScore = scoreViewModel.getCurrentScore().getValue();
+        MutableLiveData<Integer> updatedScore = new MutableLiveData<Integer>();
+        updatedScore.setValue(currentScore + 1);
+
+        scoreViewModel.setCurrentScore(updatedScore);
         String text = getString(R.string.game_current_score, scoreViewModel.getCurrentScore().getValue());
         score.setText(text);
     }
 
-    public void startGame(){
+    public void startGame() {
         moleViewModel = new ViewModelProvider(this).get(MoleViewModel.class);
         moleViewModel.runGame();
         moleViewModel.keepTrackOfMoles();
 
         moleObserver = new Observer<Integer>() {
-                @Override
-                public void onChanged(Integer integer) {
-                    switch (integer){
-                        case 0: showMoleHere = m1;
-                            break;
-                        case 1: showMoleHere = m2;
-                            break;
-                        case 2: showMoleHere = m3;
-                            break;
-                        case 3: showMoleHere = m4;
-                            break;
-                        case 4: showMoleHere = m5;
-                            break;
-                        case 5: showMoleHere = m6;
-                            break;
-                        case 6: showMoleHere = m7;
-                            break;
-                        case 7: showMoleHere = m8;
-                            break;
-                        case 8: showMoleHere = m9;
-                            break;
-                    }
+            @Override
+            public void onChanged(Integer integer) {
+                switch (integer) {
+                    case 0:
+                        showMoleHere = m1;
+                        break;
+                    case 1:
+                        showMoleHere = m2;
+                        break;
+                    case 2:
+                        showMoleHere = m3;
+                        break;
+                    case 3:
+                        showMoleHere = m4;
+                        break;
+                    case 4:
+                        showMoleHere = m5;
+                        break;
+                    case 5:
+                        showMoleHere = m6;
+                        break;
+                    case 6:
+                        showMoleHere = m7;
+                        break;
+                    case 7:
+                        showMoleHere = m8;
+                        break;
+                    case 8:
+                        showMoleHere = m9;
+                        break;
                 }
-            };
-            moleViewModel.getRandomMole().observe(this, moleObserver);
-            showMoleHere.setVisibility(View.VISIBLE);
-            showMoleHere.setClickable(true);
-            if(moleViewModel.getMissCount().getValue() >= 3){
-                endGame();
             }
+        };
+        moleViewModel.getRandomMole().observe(this, moleObserver);
+        showMoleHere.setVisibility(View.VISIBLE);
+        showMoleHere.setClickable(true);
 
+        moleObserver = new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                missCount = integer;
+            }
+        };
+        moleViewModel.getMissCount().observe(this, moleObserver);
+        if (missCount >= 3) {
+            endGame();
         }
 
-    public void endGame(){
+    }
+
+    public void endGame() {
         Intent myIntent = new Intent(getBaseContext(), EndGameActivity.class);
         startActivity(myIntent);
     }
