@@ -41,8 +41,8 @@ public class ScoreViewModel extends ViewModel {
         return currentScore;
     }
 
-    public void setCurrentScore(MutableLiveData<Integer> currentScore) {
-        this.currentScore = currentScore;
+    public void setCurrentScore(int currentScore) {
+        this.currentScore.setValue(currentScore);
     }
 
     /**

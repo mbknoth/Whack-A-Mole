@@ -9,18 +9,28 @@ import androidx.lifecycle.ViewModel;
 import java.util.Random;
 
 public class MoleViewModel extends ViewModel {
-    /**
-     * Mutable current score variable
-     */
-    private MutableLiveData<Boolean> moleOnScreen;
+
     private MutableLiveData<Integer> moleIndex;
+    private MutableLiveData<Integer> missCount;
 
     private Integer moleDelay;
     private Handler handler;
 
+    private boolean[] molesVisible;
+
     public MoleViewModel() {
         this.moleDelay = 50;
+        missCount.setValue(0);
+        molesVisible = new boolean[10];
+        for(int i = 0; i < molesVisible.length; i++){
+            molesVisible[i] = false;
+        }
     }
+
+    public MutableLiveData<Integer> getMissCount() {
+        return missCount;
+    }
+
 
     public Integer getMoleDelay() {
         return moleDelay;
@@ -35,6 +45,18 @@ public class MoleViewModel extends ViewModel {
         }
     }
 
+    public void setMolesVisibleAtIndex(int index, boolean visibility){
+        molesVisible[index] = visibility;
+    }
+
+    public boolean getMolesVisibleAtIndex(int index){
+        return this.molesVisible[index];
+    }
+
+    public MutableLiveData<Integer> getRandomMole(){
+        return moleIndex;
+    }
+
     public void runGame(){
         Runnable runnable = new Runnable() {
             int count = 0;
@@ -42,29 +64,43 @@ public class MoleViewModel extends ViewModel {
             public void run() {
                 if(count < 10){
                     int randNum = new Random(System.currentTimeMillis()).nextInt(8);
-                    moleIndex.setValue(randNum);
+                    if(!getMolesVisibleAtIndex(randNum)){
+                        moleIndex.setValue(randNum);
+                        setMolesVisibleAtIndex(randNum, true);
+                    }
+                    count++;
                 }
                 else{
                     count = 0;
-                    moleDelay = moleDelay - 5;
-                    setMoleDelay(moleDelay);
+                    setMoleDelay(moleDelay - 5);
                 }
-                handler.postDelayed(this, moleDelay);
+                handler.postDelayed(this, getMoleDelay());
             }
         };
 
     }
 
-    public MutableLiveData<Boolean> showMoleOnScreen(){
-        return moleOnScreen;
-    }
+    public void keepTrackOfMoles(){
+        Runnable runnable = new Runnable() {
+            int[] count = new int[10];
+            @Override
+            public void run() {
+                for(int i = 0; i < count.length; i++){
+                    if(getMolesVisibleAtIndex(i)){
+                        if(count[i] >= 10){
+                            missCount.setValue(missCount.getValue() + 1);
+                            setMolesVisibleAtIndex(i, false);
+                            count[i] = 0;
+                        }
+                        else{
+                            count[i]++;
+                        }
+                    }
+                }
 
-    public void setMoleOnScreen(Boolean isVisible){
-        moleOnScreen.setValue(isVisible);
-    }
-
-    public MutableLiveData<Integer> getRandomMole(){
-        return moleIndex;
+                handler.postDelayed(this, 10);
+            }
+        };
     }
 
 }

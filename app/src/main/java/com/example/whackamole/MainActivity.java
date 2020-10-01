@@ -1,6 +1,7 @@
 package com.example.whackamole;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView m7;
     private ImageView m8;
     private ImageView m9;
+    private TextView score;
 
     private Integer missCount = 3;
 
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         scoreViewModel = new ViewModelProvider(this).get(ScoreViewModel.class);
 
-        TextView score = (TextView) findViewById(R.id.current_score);
+        score = (TextView) findViewById(R.id.current_score);
         TextView hi_score = (TextView) findViewById(R.id.high_score);
 
         score.setText(0);
@@ -77,36 +79,116 @@ public class MainActivity extends AppCompatActivity {
         start_game_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                start_game_button.setClickable(false);
-//                start_game_button.setVisibility(INVISIBLE);
-//                startGame();
+                start_game_button.setClickable(false);
+                start_game_button.setVisibility(INVISIBLE);
+                score.setVisibility(View.VISIBLE);
+                startGame();
             }
         });
 
+        m1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m1.setVisibility(INVISIBLE);
+                m1.setClickable(false);
 
+                upScore();
+            }
+        });
 
+        m2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m2.setVisibility(INVISIBLE);
+                m2.setClickable(false);
+
+                upScore();
+            }
+        });
+
+        m3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m3.setVisibility(INVISIBLE);
+                m3.setClickable(false);
+
+                upScore();
+            }
+        });
+
+        m4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m4.setVisibility(INVISIBLE);
+                m4.setClickable(false);
+
+                upScore();
+            }
+        });
+
+        m5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m5.setVisibility(INVISIBLE);
+                m5.setClickable(false);
+
+                upScore();
+            }
+        });
+
+        m6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m6.setVisibility(INVISIBLE);
+                m6.setClickable(false);
+
+                upScore();
+            }
+        });
+
+        m7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m7.setVisibility(INVISIBLE);
+                m7.setClickable(false);
+
+                upScore();
+            }
+        });
+
+        m8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m8.setVisibility(INVISIBLE);
+                m8.setClickable(false);
+
+                upScore();
+            }
+        });
+
+        m9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m9.setVisibility(INVISIBLE);
+                m9.setClickable(false);
+
+                upScore();
+            }
+        });
     }
 
-    // Step 1. Game Starts -> Moles start appearing (Handler and Runnable for moles appearing + score?)
-    // Step 1a. make moles clickable and visible to appear, then in the onclicklistener change them back to invisible and non clickable
-    // Step 2. Game continues -> Keeps track of number of misses (3 strikes you're out)
-    // Step 3. Every 20 seconds the game gets progressively faster and faster
-    // Step 4. End of game, it displays
-
-    // Fragment Transaction Manager for displaying the score fragment and game over fragment - They are dynamic fragments
-    // OR end game to become a different view and
-
-    // Question: How to increase the time and appearance of mole? Tie it together with variable and update the runnable postdelay?
-    // substitute the 10 to a variable and decrease it every so often to make the appearance
-    // Question:
+    public void upScore(){
+        scoreViewModel.setCurrentScore(scoreViewModel.getCurrentScore().getValue() + 1);
+        String text = getString(R.string.game_current_score, scoreViewModel.getCurrentScore().getValue());
+        score.setText(text);
+    }
 
     public void startGame(){
         moleViewModel = new ViewModelProvider(this).get(MoleViewModel.class);
         moleViewModel.runGame();
+        moleViewModel.keepTrackOfMoles();
 
-        int inGameMisses = 0;
-        while (missCount > inGameMisses){
-            moleObserver = new Observer<Integer>() {
+        moleObserver = new Observer<Integer>() {
                 @Override
                 public void onChanged(Integer integer) {
                     switch (integer){
@@ -132,10 +214,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
             moleViewModel.getRandomMole().observe(this, moleObserver);
+            showMoleHere.setVisibility(View.VISIBLE);
+            showMoleHere.setClickable(true);
+            if(moleViewModel.getMissCount().getValue() >= 3){
+                endGame();
+            }
 
         }
-
-    }
 
     public void endGame(){
         Intent myIntent = new Intent(getBaseContext(), EndGameActivity.class);
