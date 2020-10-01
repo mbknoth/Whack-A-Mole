@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void endGame(){
-
+        Intent myIntent = new Intent(getBaseContext(), EndGameActivity.class);
+        startActivity(myIntent);
     }
 }
