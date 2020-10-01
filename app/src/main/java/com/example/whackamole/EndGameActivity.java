@@ -26,6 +26,10 @@ public class EndGameActivity extends AppCompatActivity {
         String text = getString(R.string.end_game_screen_text, scoreViewModel.getCurrentScore().getValue());
         score.setText(text);
 
+        if(scoreViewModel.getCurrentScore().getValue() > scoreViewModel.getHighScore().getValue()){
+            scoreViewModel.setHighScore(scoreViewModel.getCurrentScore());
+        }
+
         Button play_again = (Button) findViewById(R.id.play_again);
         play_again.setOnClickListener(new View.OnClickListener() {
             @Override

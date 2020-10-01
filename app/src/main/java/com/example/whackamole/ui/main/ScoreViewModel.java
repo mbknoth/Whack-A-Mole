@@ -4,6 +4,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class ScoreViewModel extends ViewModel {
+
+    public ScoreViewModel() {
+        this.currentScore.setValue(0);
+    }
+
     /**
      * Mutable current score variable
      */

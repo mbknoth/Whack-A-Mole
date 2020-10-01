@@ -54,7 +54,13 @@ public class MainActivity extends AppCompatActivity {
         score = (TextView) findViewById(R.id.current_score);
         TextView hi_score = (TextView) findViewById(R.id.high_score);
 
-        score.setText(0);
+        scoreObserver = new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                score.setText(integer);
+            }
+        };
+        scoreViewModel.getCurrentScore().observe(this, scoreObserver);
 
         scoreObserver = new Observer<Integer>() {
             @Override
