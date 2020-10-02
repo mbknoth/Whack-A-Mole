@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class ScoreViewModel extends ViewModel {
+
+
     /**
      * Mutable current score variable
      */
@@ -17,8 +19,8 @@ public class ScoreViewModel extends ViewModel {
     public ScoreViewModel() {
         currentScore = new MutableLiveData<Integer>();
         highScore = new MutableLiveData<Integer>();
-        this.currentScore.setValue(0);
-        this.highScore.setValue(0);
+        currentScore.setValue(0);
+        highScore.setValue(0);
     }
 
     /**

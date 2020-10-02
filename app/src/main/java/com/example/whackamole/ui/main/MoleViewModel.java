@@ -67,7 +67,7 @@ public class MoleViewModel extends ViewModel {
 
             @Override
             public void run() {
-                if (count < 10) {
+                if (count < 25) {
                     int randNum = new Random(System.currentTimeMillis()).nextInt(9);
                     if (!getMolesVisibleAtIndex(randNum)) {
                         moleIndex.setValue(randNum);
@@ -102,7 +102,7 @@ public class MoleViewModel extends ViewModel {
                     }
                 }
 
-                handler.postDelayed(this, 10);
+                handler.postDelayed(this, getMoleDelay());
             }
         };
         handler.postAtTime(runnable, SystemClock.uptimeMillis());
