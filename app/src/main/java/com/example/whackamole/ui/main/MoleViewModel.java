@@ -20,7 +20,7 @@ public class MoleViewModel extends ViewModel {
     private boolean[] molesVisible;
 
     public MoleViewModel() {
-        this.moleDelay = 50;
+        this.moleDelay = 500;
         missCount = new MutableLiveData<Integer>();
         moleIndex = new MutableLiveData<Integer>();
         missCount.setValue(0);
@@ -68,7 +68,7 @@ public class MoleViewModel extends ViewModel {
             @Override
             public void run() {
                 if (count < 10) {
-                    int randNum = new Random(System.currentTimeMillis()).nextInt(8);
+                    int randNum = new Random(System.currentTimeMillis()).nextInt(9);
                     if (!getMolesVisibleAtIndex(randNum)) {
                         moleIndex.setValue(randNum);
                         setMolesVisibleAtIndex(randNum, true);
@@ -76,7 +76,7 @@ public class MoleViewModel extends ViewModel {
                     count++;
                 } else {
                     count = 0;
-                    setMoleDelay(moleDelay - 5);
+                    setMoleDelay(moleDelay - 10);
                 }
                 handler.postDelayed(this, getMoleDelay());
             }
@@ -106,6 +106,10 @@ public class MoleViewModel extends ViewModel {
             }
         };
         handler.postAtTime(runnable, SystemClock.uptimeMillis());
+    }
+
+    public void endGame(){
+        handler.removeCallbacksAndMessages(null);
     }
 
 }

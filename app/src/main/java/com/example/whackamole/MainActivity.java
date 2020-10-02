@@ -27,9 +27,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ScoreViewModel scoreViewModel;
     private Observer<Integer> scoreObserver;
+    private Observer<Integer> highScoreObserver;
 
     private MoleViewModel moleViewModel;
     private Observer<Integer> moleObserver;
+    private Observer<Integer> endGameObserver;
 
     private ImageView showMoleHere;
     private ImageView m1;
@@ -41,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView m7;
     private ImageView m8;
     private ImageView m9;
-    private TextView score;
 
     private Integer missCount;
 
@@ -54,24 +55,26 @@ public class MainActivity extends AppCompatActivity {
 
         missCount = 0;
 
-        score = (TextView) findViewById(R.id.current_score);
+        TextView score = (TextView) findViewById(R.id.current_score);
         TextView hi_score = (TextView) findViewById(R.id.high_score);
 
         scoreObserver = new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                score.setText(integer);
+                String new_current_score = getString(R.string.game_current_score, integer);
+                score.setText(new_current_score);
             }
         };
         scoreViewModel.getCurrentScore().observe(this, scoreObserver);
 
-        scoreObserver = new Observer<Integer>() {
+        highScoreObserver = new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                hi_score.setText(integer);
+                String new_high_score = getString(R.string.game_hi_score, integer);
+                hi_score.setText(new_high_score);
             }
         };
-        scoreViewModel.getHighScore().observe(this, scoreObserver);
+        scoreViewModel.getHighScore().observe(this, highScoreObserver);
 
         m1 = (ImageView) findViewById(R.id.mole1);
         m2 = (ImageView) findViewById(R.id.mole2);
@@ -193,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
         scoreViewModel.setCurrentScore(updatedScore);
         String text = getString(R.string.game_current_score, scoreViewModel.getCurrentScore().getValue());
+        TextView score = (TextView) findViewById(R.id.current_score);
         score.setText(text);
     }
 
@@ -233,26 +237,26 @@ public class MainActivity extends AppCompatActivity {
                         showMoleHere = m9;
                         break;
                 }
+                showMoleHere.setVisibility(View.VISIBLE);
+                showMoleHere.setClickable(true);
             }
         };
         moleViewModel.getRandomMole().observe(this, moleObserver);
-        showMoleHere.setVisibility(View.VISIBLE);
-        showMoleHere.setClickable(true);
 
-        moleObserver = new Observer<Integer>() {
+        endGameObserver = new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
                 missCount = integer;
+                if (missCount >= 3) {
+                    endGame();
+                }
             }
         };
-        moleViewModel.getMissCount().observe(this, moleObserver);
-        if (missCount >= 3) {
-            endGame();
-        }
-
+        moleViewModel.getMissCount().observe(this, endGameObserver);
     }
 
     public void endGame() {
+        moleViewModel.endGame();
         Intent myIntent = new Intent(getBaseContext(), EndGameActivity.class);
         startActivity(myIntent);
     }
