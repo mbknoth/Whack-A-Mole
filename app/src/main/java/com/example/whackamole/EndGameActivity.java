@@ -1,8 +1,6 @@
 package com.example.whackamole;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,10 +8,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.whackamole.ui.main.ScoreViewModel;
-
+/**
+ * This is the End Game Activity which gives the player a summery of how they did.
+ * When the player is ready to play again, this activity directs them back to the main activity
+ *
+ * @author mbknoth
+ */
 public class EndGameActivity extends AppCompatActivity {
 
+    /**
+     * When the End Game Activity is created, it will pull the "extras" that were sent over
+     * from the Main Activity and use the information to display them on screen
+     *
+     * When the user is ready to play again they will press the corresponding button
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +55,14 @@ public class EndGameActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This public helper method is in charge of directing the player back to the Main Activity
+     * and also sends the high_score information so it is not lost in transition between
+     * the two activities
+     *
+     * @param high_score
+     *  the all time high score of the game
+     */
     public void play_again(int high_score) {
         Intent myIntent = new Intent(getBaseContext(), MainActivity.class);
         myIntent.putExtra("High Score", high_score);
