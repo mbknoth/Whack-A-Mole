@@ -13,6 +13,7 @@ public class MoleViewModel extends ViewModel {
 
     private MutableLiveData<Integer> moleIndex;
     private MutableLiveData<Integer> missCount;
+    private MutableLiveData<Integer> hideMoleIndex;
 
     private Integer moleDelay;
     private Handler handler;
@@ -23,7 +24,10 @@ public class MoleViewModel extends ViewModel {
         this.moleDelay = 500;
         missCount = new MutableLiveData<Integer>();
         moleIndex = new MutableLiveData<Integer>();
+        hideMoleIndex = new MutableLiveData<Integer>();
+
         missCount.setValue(0);
+        hideMoleIndex.setValue(-1);
 
         handler = new Handler();
 
@@ -35,6 +39,10 @@ public class MoleViewModel extends ViewModel {
 
     public MutableLiveData<Integer> getMissCount() {
         return missCount;
+    }
+
+    public void setMissCount(MutableLiveData<Integer> missCount){
+        this.missCount = missCount;
     }
 
     public Integer getMoleDelay() {
@@ -55,6 +63,14 @@ public class MoleViewModel extends ViewModel {
 
     public boolean getMolesVisibleAtIndex(int index) {
         return this.molesVisible[index];
+    }
+
+    public MutableLiveData<Integer> getHiddenMoleIndex(){
+        return this.hideMoleIndex;
+    }
+
+    public void setHiddenMoleIndex(int index){
+        hideMoleIndex.setValue(index);
     }
 
     public MutableLiveData<Integer> getRandomMole() {
@@ -95,6 +111,7 @@ public class MoleViewModel extends ViewModel {
                         if (count[i] >= 10) {
                             missCount.setValue(missCount.getValue() + 1);
                             setMolesVisibleAtIndex(i, false);
+                            setHiddenMoleIndex(i);
                             count[i] = 0;
                         } else {
                             count[i]++;

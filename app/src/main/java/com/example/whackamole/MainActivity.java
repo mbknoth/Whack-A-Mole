@@ -6,7 +6,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -52,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
     private Observer<Integer> moleObserver;
 
     /**
+     * The observer used to watch the visibility of the mole at selected index
+     */
+    private  Observer<Integer> moleVisibilityObserver;
+
+    /**
      * The observer used to watch how many misses the user records
      */
     private Observer<Integer> endGameObserver;
@@ -88,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.hit);
 
         scoreViewModel = new ViewModelProvider(this).get(ScoreViewModel.class);
 
@@ -104,8 +113,15 @@ public class MainActivity extends AppCompatActivity {
         //I would've had to use a ViewModelFactory but given circumstances
         //I felt that this was the better work around
         Bundle extras = getIntent().getExtras();
+        SharedPreferences pref = getSharedPreferences("highScore", MODE_PRIVATE);
         if (extras != null) {
             int high_score_prev = extras.getInt("High Score");
+            MutableLiveData<Integer> high_score_prev_mutable = new MutableLiveData<Integer>();
+            high_score_prev_mutable.setValue(high_score_prev);
+            scoreViewModel.setHighScore(high_score_prev_mutable);
+        }
+        else if(pref.contains("game_high_score")){
+            int high_score_prev = pref.getInt("game_high_score", 0);
             MutableLiveData<Integer> high_score_prev_mutable = new MutableLiveData<Integer>();
             high_score_prev_mutable.setValue(high_score_prev);
             scoreViewModel.setHighScore(high_score_prev_mutable);
@@ -156,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 m1.setClickable(false);
                 moleViewModel.setMolesVisibleAtIndex(0, false);
 
+                mp.start();
                 upScore();
             }
         });
@@ -167,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 m2.setClickable(false);
                 moleViewModel.setMolesVisibleAtIndex(1, false);
 
+                mp.start();
                 upScore();
             }
         });
@@ -178,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 m3.setClickable(false);
                 moleViewModel.setMolesVisibleAtIndex(2, false);
 
+                mp.start();
                 upScore();
             }
         });
@@ -189,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 m4.setClickable(false);
                 moleViewModel.setMolesVisibleAtIndex(3, false);
 
+                mp.start();
                 upScore();
             }
         });
@@ -200,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 m5.setClickable(false);
                 moleViewModel.setMolesVisibleAtIndex(4, false);
 
+                mp.start();
                 upScore();
             }
         });
@@ -211,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
                 m6.setClickable(false);
                 moleViewModel.setMolesVisibleAtIndex(5, false);
 
+                mp.start();
                 upScore();
             }
         });
@@ -223,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 moleViewModel.setMolesVisibleAtIndex(6, false);
 
 
+                mp.start();
                 upScore();
             }
         });
@@ -235,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 moleViewModel.setMolesVisibleAtIndex(7, false);
 
 
+                mp.start();
                 upScore();
             }
         });
@@ -247,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 moleViewModel.setMolesVisibleAtIndex(8, false);
 
 
+                mp.start();
                 upScore();
             }
         });
@@ -330,6 +355,60 @@ public class MainActivity extends AppCompatActivity {
         };
         moleViewModel.getRandomMole().observe(this, moleObserver);
 
+        moleVisibilityObserver = new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer index) {
+                switch (index){
+                    case 0:
+                        ImageView mole1 = (ImageView) findViewById(R.id.mole1);
+                        mole1.setVisibility(INVISIBLE);
+                        mole1.setClickable(false);
+                        break;
+                    case 1:
+                        ImageView mole2 = (ImageView) findViewById(R.id.mole2);
+                        mole2.setVisibility(INVISIBLE);
+                        mole2.setClickable(false);
+                        break;
+                    case 2:
+                        ImageView mole3 = (ImageView) findViewById(R.id.mole3);
+                        mole3.setVisibility(INVISIBLE);
+                        mole3.setClickable(false);
+                        break;
+                    case 3:
+                        ImageView mole4 = (ImageView) findViewById(R.id.mole4);
+                        mole4.setVisibility(INVISIBLE);
+                        mole4.setClickable(false);
+                        break;
+                    case 4:
+                        ImageView mole5 = (ImageView) findViewById(R.id.mole5);
+                        mole5.setVisibility(INVISIBLE);
+                        mole5.setClickable(false);
+                        break;
+                    case 5:
+                        ImageView mole6 = (ImageView) findViewById(R.id.mole6);
+                        mole6.setVisibility(INVISIBLE);
+                        mole6.setClickable(false);
+                        break;
+                    case 6:
+                        ImageView mole7 = (ImageView) findViewById(R.id.mole7);
+                        mole7.setVisibility(INVISIBLE);
+                        mole7.setClickable(false);
+                        break;
+                    case 7:
+                        ImageView mole8 = (ImageView) findViewById(R.id.mole8);
+                        mole8.setVisibility(INVISIBLE);
+                        mole8.setClickable(false);
+                        break;
+                    case 8:
+                        ImageView mole9 = (ImageView) findViewById(R.id.mole9);
+                        mole9.setVisibility(INVISIBLE);
+                        mole9.setClickable(false);
+                        break;
+                }
+            }
+        };
+        moleViewModel.getHiddenMoleIndex().observe(this, moleVisibilityObserver);
+
         //used to reference how many misses the player has in the game. If above
         // the threshold the game is called to end
         endGameObserver = new Observer<Integer>() {
@@ -358,6 +437,10 @@ public class MainActivity extends AppCompatActivity {
             MutableLiveData<Integer> new_high_score = scoreViewModel.getCurrentScore();
             scoreViewModel.setHighScore(new_high_score);
         }
+        SharedPreferences pref = getSharedPreferences("highScore", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("game_high_score", scoreViewModel.getHighScore().getValue());
+        editor.commit();
 
         Intent myIntent = new Intent(getBaseContext(), EndGameActivity.class);
         myIntent.putExtra("Current Score", scoreViewModel.getCurrentScore().getValue());
