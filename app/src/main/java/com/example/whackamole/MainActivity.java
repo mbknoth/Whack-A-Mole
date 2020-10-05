@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -96,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        //Used for playing sound when mole is tapped on
         final MediaPlayer mp = MediaPlayer.create(this, R.raw.hit);
 
         scoreViewModel = new ViewModelProvider(this).get(ScoreViewModel.class);
@@ -120,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
             high_score_prev_mutable.setValue(high_score_prev);
             scoreViewModel.setHighScore(high_score_prev_mutable);
         }
+        //For persistent data, storing the high score value using shared preferences
+        //Referencing the key value pair that is stored at the end of the game and
+        //updating the viewmodel to contain the correct high score value, even after
+        //game is over and app is force exited
         else if(pref.contains("game_high_score")){
             int high_score_prev = pref.getInt("game_high_score", 0);
             MutableLiveData<Integer> high_score_prev_mutable = new MutableLiveData<Integer>();
@@ -308,7 +313,10 @@ public class MainActivity extends AppCompatActivity {
      * Public helper method to initialize the start of the game and have all that
      * logic centralized into one method. This method updates which moles are randomly selected
      * and also keeps track of the miss count and when the miss count is above 3, this method
-     * calls the game to end
+     * calls the game to end.
+     *
+     * This method also watches over which moles have reached their allowed time to be on screen
+     * and updates the UI to take them away as the game will count this as a miss.
      */
     public void startGame() {
         moleViewModel = new ViewModelProvider(this).get(MoleViewModel.class);
@@ -429,6 +437,10 @@ public class MainActivity extends AppCompatActivity {
      *
      * This method will send the user to the End Game Activity to show the user a summery of how they did
      * The current score in the view model is reset to be prepared for the next game
+     *
+     * The all-time high score of the game is stored in Shared Preferences, that way when the game is closed
+     * the high score will persist and be available when app is opened. Storing the high score with the key value
+     * relationship that comes with Shared Preferences
      */
     public void endGame() {
         moleViewModel.endGame();
